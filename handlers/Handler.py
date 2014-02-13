@@ -1,7 +1,7 @@
 class Handler:
 
     def callback(self, prefix, name, *args):
-        method = getattr(self, prefix, name)
+        method = getattr(self, prefix, name, None)
         if callable(method):
             return method(*args)
 
@@ -14,6 +14,6 @@ class Handler:
     def sub(self, name):
         def substitution(match):
             result = self.callback("sub_", name)
-            if result is None: match.group(0)
+            if result is None: result match.group(0)
             return result;
         return substitution
