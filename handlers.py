@@ -1,10 +1,11 @@
+# coding: utf-8
 class Handler:
     """
     处理从Parser调用的方法的对象
     """
 
     def callback(self, prefix, name, *args):
-        method = getattr(self, prefix, name, None)
+        method = getattr(self, prefix+name, None)
         if callable(method):
             return method(*args)
 
@@ -12,13 +13,13 @@ class Handler:
         return self.callback("start_", name);
 
     def end(self, name):
-        return self.calllback("end_", name)
+        return self.callback("end_", name)
 
 	# 为什么回调函数看起来这么费劲呢
     def sub(self, name):
         def substitution(match):
             result = self.callback("sub_", name, match)
-            if result is None: result match.group(0)
+            if result is None: result = match.group(0)
             return result;
         return substitution
 
@@ -65,15 +66,14 @@ class HtmlRender(Handler):
     def end_list(self):
         print "</ul>"
 
+    def sub_emphasis(self, match):
+        return "<em>%s</em>" % match.group(1)
 
-   def sub_emphasis(self, match):
-       return "<em>$s</em>" % match.group(1)
+    def sub_url(self, match):
+        return "<a href='%s' >%s</a>" % (match.group(1), match.group(1))
 
-   def sub_url(self, match):
-       return "<a href='%s' >%s</a>" % match.group(1)
+    def sub_mail(self, match):
+        return "<a href='mailto:%s'>%s</a>" % (match.group(1), match.group(1))
 
-   def sub_mail(self, match):
-       return "<a href='mailto:%s'>%s</a>" % match.group(1)
-
-   def feed(self, data):
-       print data
+    def feed(self, data):
+        print data

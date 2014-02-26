@@ -1,3 +1,4 @@
+# coding: utf-8
 class Rule:
 	"""
 	super class of Rule
@@ -14,10 +15,10 @@ class HeadingRule(Rule):
 	"""
 	type = "heading"
 	def condition(self, block):
-		return "\n" not in block and len(block) <= 70
-		and not block[-1] == ":"
+		return "\n" not in block and len(block) <= 70 \
+            and not block[-1] == ":"
 
-class TitleRule(Rule):
+class TitleRule(HeadingRule):
 	"""
 	题目是文档的第一个快，作为标题存在
 	"""
@@ -25,7 +26,7 @@ class TitleRule(Rule):
 	first = True
 
 	def condition(self, block):
-		if not self.first return False
+		if not self.first: return False
 		self.first = False
 		#todo 好吧，这个语法我还不太清楚
 		return HeadingRule.condition(self, block)
@@ -45,7 +46,7 @@ class ListItemRule(Rule):
 		handler.end(self.type)
 		return True
 
-class List(ListItemRule):
+class ListRule(ListItemRule):
 	"""
 	列表开始于并非列表的块和随后的列表块之间,由最后一个连续块作为结束
 	"""
@@ -66,7 +67,7 @@ class List(ListItemRule):
 		return False
 
 
-class ParagrapRule(Rule):
+class ParagraphRule(Rule):
 	"""
 	默认规则，处理所有未被其他规则处理的段落
 	"""
